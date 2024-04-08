@@ -295,7 +295,9 @@ void RetroEngine::Init()
     running  = false;
     if (LoadGameConfig("Data/Game/GameConfig.bin")) {
         if (InitRenderDevice()) {
+            debugPrint("InitAudioPlayback \n");
             if (InitAudioPlayback()) {
+                debugPrint("InitAudioPlayback OK \n");
                 InitFirstStage();
                 ClearScriptData();
                 initialised = true;
@@ -1170,6 +1172,10 @@ void RetroEngine::Callback(int callbackID)
         case CALLBACK_EXIT_SELECTED:
             // gameMode = ENGINE_EXITGAME;
             PrintLog("Callback: Exit Selected");
+            #if RETRO_PLATFORM == RETRO_XBOX
+                XReboot();
+            #endif
+
             if (bytecodeMode == BYTECODE_PC) {
                 running = false;
             }

@@ -47,6 +47,11 @@ SDL_AudioStream *ogv_stream;
 int InitAudioPlayback()
 {
     StopAllSfx(); //"init"
+
+    #if RETRO_PLATFORM == RETRO_XBOX
+        return 1;
+    #endif
+
 #if RETRO_USING_SDL1 || RETRO_USING_SDL2
     SDL_AudioSpec want;
     want.freq     = AUDIO_FREQUENCY;
@@ -342,15 +347,19 @@ void ProcessAudioPlayback(void *userdata, Uint8 *stream, int len)
 #if RETRO_USING_SDL2
         // Process music being played by a ogv video
         if (videoPlaying == 1) {
+            #if RETRO_PLATFORM == RETRO_XBOX
+                return;
+            #endif
             // Fetch THEORAPLAY audio packets, and shove them into the SDL Audio Stream
             const size_t bytes_to_do = samples_to_do * sizeof(Sint16);
 
-            const THEORAPLAY_AudioPacket *packet;
+            // TODO XBOX
+            // const THEORAPLAY_AudioPacket *packet;
 
-            while ((packet = THEORAPLAY_getAudio(videoDecoder)) != NULL) {
-                SDL_AudioStreamPut(ogv_stream, packet->samples, packet->frames * sizeof(float) * 2); // 2 for stereo
-                THEORAPLAY_freeAudio(packet);
-            }
+            // while ((packet = THEORAPLAY_getAudio(videoDecoder)) != NULL) {
+            //     SDL_AudioStreamPut(ogv_stream, packet->samples, packet->frames * sizeof(float) * 2); // 2 for stereo
+            //     THEORAPLAY_freeAudio(packet);
+            // }
 
             Sint16 buffer[MIX_BUFFER_SAMPLES];
 

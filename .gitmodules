@@ -4,3 +4,12 @@
 [submodule "flatpak/shared-modules"]
 	path = flatpak/shared-modules
 	url = https://github.com/flathub/shared-modules.git
+[submodule "dependencies/xbox/nxdk"]
+	path = dependencies/xbox/nxdk
+	url = https://github.com/danielgpinheiro/nxdk
+[submodule "dependencies/xbox/vorbis"]
+	path = dependencies/xbox/vorbis
+	url = https://github.com/danielgpinheiro/vorbis
+[submodule "dependencies/xbox/ogg"]
+	path = dependencies/xbox/ogg
+	url = https://github.com/xiph/ogg

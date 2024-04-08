@@ -1,0 +1,85 @@
+XBE_TITLE = RSDKv3X
+GEN_XISO = $(XBE_TITLE).iso
+NXDK_DIR = $(CURDIR)/dependencies/xbox/nxdk
+RSDKV3_DIR = $(CURDIR)/RSDKv3
+NXDK_CXX = y
+NXDK_SDL = y
+NXDK_SDL_MIXER = y
+
+SRCS += \
+			$(CURDIR)/dependencies/xbox/stb/stb_image.c \
+			$(RSDKV3_DIR)/Animation.cpp       \
+			$(RSDKV3_DIR)/Audio.cpp           \
+			$(RSDKV3_DIR)/Collision.cpp       \
+			$(RSDKV3_DIR)/Debug.cpp           \
+			$(RSDKV3_DIR)/Drawing.cpp         \
+			$(RSDKV3_DIR)/Ini.cpp             \
+			$(RSDKV3_DIR)/Input.cpp           \
+			$(RSDKV3_DIR)/main.cpp            \
+			$(RSDKV3_DIR)/ModAPI.cpp          \
+			$(RSDKV3_DIR)/Math.cpp            \
+			$(RSDKV3_DIR)/Object.cpp          \
+			$(RSDKV3_DIR)/Palette.cpp         \
+			$(RSDKV3_DIR)/Player.cpp          \
+			$(RSDKV3_DIR)/Reader.cpp          \
+			$(RSDKV3_DIR)/RetroEngine.cpp     \
+			$(RSDKV3_DIR)/Scene.cpp           \
+			$(RSDKV3_DIR)/Scene3D.cpp         \
+			$(RSDKV3_DIR)/Script.cpp          \
+			$(RSDKV3_DIR)/Sprite.cpp          \
+			$(RSDKV3_DIR)/String.cpp          \
+			$(RSDKV3_DIR)/Text.cpp            \
+			$(RSDKV3_DIR)/Userdata.cpp        \
+			$(RSDKV3_DIR)/Video.cpp
+
+INCLUDES += \
+			-I$(RSDK_DIR)/ \
+			-I$(CURDIR)/dependencies/all/filesystem/include \
+			-I$(CURDIR)/dependencies/xbox/ogg/ \
+			-I$(CURDIR)/dependencies/xbox/stb/ \
+
+EXTRA_OFLAGS = \
+						-O2 \
+						-fsigned-char \
+						-fpermissive
+
+RSDK_FLAGS	=	\
+					-D__XBOX__ \
+					-DRETRO_USE_MOD_LOADER=0 \
+					-DRETRO_USING_OPENGL=0 \
+					-DRSDK_AUTOBUILD \
+					-DBASE_PATH='""' \
+
+STB_FLAGS = \
+					-DSTBI_NO_SIMD \
+					-DSTBI_NO_THREAD_LOCALS \
+					-DSTBI_ONLY_PNG \
+					-DSTBI_ONLY_JPEG \
+					-DSTBI_ONLY_TGA \
+					-DSTBI_ONLY_BMP
+
+CFLAGS	+=	-g3 $(EXTRA_OFLAGS) -Wall $(INCLUDES) $(RSDK_FLAGS) $(STB_FLAGS)
+
+CXXFLAGS +=	$(CFLAGS) -Wpedantic
+
+new_all: copy_resources all
+
+# Add vorbis and ogg
+include $(CURDIR)/dependencies/xbox/Makefile-vorbis.nxdk
+include $(CURDIR)/dependencies/xbox/Makefile-ogg.nxdk
+
+include $(NXDK_DIR)/Makefile
+
+copy_resources:
+	@mkdir -p $(OUTPUT_DIR)
+	@mkdir -p $(OUTPUT_DIR)/videos
+	@cp -r ../Data.rsdk $(OUTPUT_DIR)
+	@cp -r ../SData.bin $(OUTPUT_DIR)
+	@cp -r ../videos/* $(OUTPUT_DIR)/videos
+
+clean_local:
+	@echo clean ...
+	rm -Rf ./bin
+	find . -name '*.iso' -type f -delete
+	find . -name '*.obj' ! -path './dependencies/xbox/nxdk/*' -type f -delete
+	find . -name '*.d' ! -path './dependencies/xbox/nxdk/*' -type f -delete

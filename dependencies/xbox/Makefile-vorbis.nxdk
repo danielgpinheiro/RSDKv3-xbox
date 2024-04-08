@@ -1,0 +1,28 @@
+VORBIS_DIR ?= $(CURDIR)/dependencies/xbox/vorbis
+
+VORBIS_SRCS += $(VORBIS_DIR)/lib/analysis.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/bitrate.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/block.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/codebook.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/envelope.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/floor0.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/floor1.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/info.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/lookup.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/lpc.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/lsp.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/mapping0.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/mdct.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/psy.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/registry.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/res0.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/sharedbook.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/smallft.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/synthesis.c
+VORBIS_SRCS += $(VORBIS_DIR)/lib/window.c
+
+VORBIS_SRCS += $(VORBIS_DIR)/lib/vorbisfile.c
+
+SRCS += $(VORBIS_SRCS)
+CFLAGS += -isystem $(VORBIS_DIR)/include \
+          -DHAVE_ALLOCA_H

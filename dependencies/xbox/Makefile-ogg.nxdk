@@ -1,0 +1,7 @@
+OGG_DIR ?= $(CURDIR)/dependencies/xbox/ogg
+
+OGG_SRCS += $(wildcard $(OGG_DIR)/src/framing.c)
+OGG_SRCS += $(wildcard $(OGG_DIR)/src/bitwise.c)
+
+SRCS += $(OGG_SRCS)
+CFLAGS += -isystem $(OGG_DIR)/include

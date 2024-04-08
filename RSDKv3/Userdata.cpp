@@ -346,7 +346,12 @@ void InitUserdata()
 #if RETRO_PLATFORM == RETRO_WINDOWS
         ini.SetBool("Dev", "UseSteamDir", Engine.useSteamDir = false);
 #endif
-        ini.SetBool("Dev", "UseHQModes", Engine.useHQModes = true);
+        #if RETRO_PLATFORM == RETRO_XBOX
+            ini.SetBool("Dev", "UseHQModes", Engine.useHQModes = false);
+        #else
+            ini.SetBool("Dev", "UseHQModes", Engine.useHQModes = true);
+        #endif
+
         sprintf(Engine.dataFile, "%s", "Data.rsdk");
         ini.SetString("Dev", "DataFile", Engine.dataFile);
 
@@ -457,7 +462,11 @@ void InitUserdata()
             Engine.useSteamDir = false;
 #endif
         if (!ini.GetBool("Dev", "UseHQModes", &Engine.useHQModes))
-            Engine.useHQModes = true;
+            #if RETRO_PLATFORM == RETRO_XBOX
+                Engine.useHQModes = false;
+            #else
+                Engine.useHQModes = true;
+            #endif
 
         Engine.startList_Game  = Engine.startList;
         Engine.startStage_Game = Engine.startStage;

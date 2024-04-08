@@ -49,13 +49,14 @@ typedef unsigned int uint;
 #define RETRO_VITA (7)
 #define RETRO_UWP  (8)
 #define RETRO_LINUX (9)
+#define RETRO_XBOX (10)
 
 // Platform types (Game manages platform-specific code such as HUD position using this rather than the above)
 #define RETRO_STANDARD (0)
 #define RETRO_MOBILE   (1)
 
 // use this macro (RETRO_PLATFORM) to define platform specific code blocks and etc to run the engine
-#if defined _WIN32
+#if defined _WIN32 && !defined __XBOX__
 #if defined WINAPI_FAMILY
 #if WINAPI_FAMILY != WINAPI_FAMILY_APP
 #define RETRO_PLATFORM (RETRO_WIN)
@@ -85,6 +86,8 @@ typedef unsigned int uint;
 #define RETRO_PLATFORM (RETRO_VITA)
 #elif defined __linux__
 #define RETRO_PLATFORM (RETRO_LINUX)
+#elif defined __XBOX__
+#define RETRO_PLATFORM   (RETRO_XBOX)
 #else
 #define RETRO_PLATFORM (RETRO_WIN) // Default
 #endif
@@ -92,6 +95,10 @@ typedef unsigned int uint;
 #if RETRO_PLATFORM == RETRO_VITA
 #define BASE_PATH            "ux0:data/SonicCD/"
 #define DEFAULT_SCREEN_XSIZE 480
+#define DEFAULT_FULLSCREEN   true
+#elif RETRO_PLATFORM == RETRO_XBOX
+#define BASE_PATH            "D:\\"
+#define DEFAULT_SCREEN_XSIZE 424
 #define DEFAULT_FULLSCREEN   true
 #elif RETRO_PLATFORM == RETRO_UWP
 #define BASE_PATH            ""
@@ -120,6 +127,10 @@ typedef unsigned int uint;
 #define RETRO_USING_SDL1 (1)
 #define RETRO_USING_SDL2 (0)
 #endif
+#elif RETRO_PLATFORM == RETRO_XBOX
+#define RETRO_USING_SDL1 (0)
+#define RETRO_USING_SDL2 (1)
+#define RETRO_USING_SDLMIXER (1)
 #else // Since its an else & not an elif these platforms probably aren't supported yet
 #define RETRO_USING_SDL1 (0)
 #define RETRO_USING_SDL2 (0)
@@ -197,7 +208,7 @@ typedef unsigned int uint;
 #else
 
 // use *this* macro to determine what platform the game thinks its running on (since only the first 7 platforms are supported natively by scripts)
-#if RETRO_PLATFORM == RETRO_VITA
+#if RETRO_PLATFORM == RETRO_VITA || RETRO_PLATFORM == RETRO_XBOX
 #define RETRO_GAMEPLATFORMID (RETRO_WIN)
 #elif RETRO_PLATFORM == RETRO_UWP
 #define RETRO_GAMEPLATFORMID (UAP_GetRetroGamePlatformId())
@@ -369,6 +380,18 @@ enum RetroBytecodeFormat {
 #include <vorbis/vorbisfile.h>
 #include <theora/theora.h>
 #include <theoraplay.h>
+#elif RETRO_PLATFORM == RETRO_XBOX
+#include <hal/debug.h>
+#include <hal/video.h>
+#include <windows.h>
+#include <stdbool.h>
+#include <hal/xbox.h>
+#include <SDL.h>
+#include <vorbis/vorbisfile.h>
+
+#if RETRO_USING_SDLMIXER
+#include <SDL_mixer.h>
+#endif
 #endif
 
 #if RETRO_PLATFORM == RETRO_ANDROID
@@ -466,7 +489,12 @@ public:
     char startSceneID[0x10];
 
     bool showPaletteOverlay = false;
-    bool useHQModes         = true;
+    
+    #if RETRO_PLATFORM == RETRO_XBOX
+        bool useHQModes = false;
+    #else
+        bool useHQModes = true;
+    #endif
 #endif
 
     void Init();

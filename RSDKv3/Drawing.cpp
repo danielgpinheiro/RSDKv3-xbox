@@ -103,12 +103,15 @@ int InitRenderDevice()
     sprintf(gameTitle, "%s%s", Engine.gameWindowText, Engine.usingDataFile_Config ? "" : " (Using Data Folder)");
 
 #if RETRO_USING_SDL2
-    SDL_Init(SDL_INIT_EVERYTHING);
-
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, Engine.vsync ? "1" : "0");
-    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
-    SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
+    #if RETRO_PLATFORM == RETRO_XBOX
+        SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
+    #else
+        SDL_Init(SDL_INIT_EVERYTHING);
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+        SDL_SetHint(SDL_HINT_RENDER_VSYNC, Engine.vsync ? "1" : "0");
+        SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+        SDL_SetHint(SDL_HINT_WINRT_HANDLE_BACK_BUTTON, "1");
+    #endif
 
     byte flags = 0;
 #if RETRO_USING_OPENGL
@@ -148,10 +151,18 @@ int InitRenderDevice()
     SCREEN_CENTERX = SCREEN_XSIZE / 2;
     viewOffsetX    = 0;
 
-    Engine.window = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_XSIZE * Engine.windowScale,
+    #if RETRO_PLATFORM == RETRO_XBOX
+        Engine.window   = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_XSIZE, SCREEN_YSIZE, SDL_WINDOW_SHOWN);
+    #else
+        Engine.window   = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_XSIZE * Engine.windowScale,
                                      SCREEN_YSIZE * Engine.windowScale, SDL_WINDOW_ALLOW_HIGHDPI | flags);
+    #endif
 #if !RETRO_USING_OPENGL
-    Engine.renderer = SDL_CreateRenderer(Engine.window, -1, SDL_RENDERER_ACCELERATED);
+    #if RETRO_PLATFORM == RETRO_XBOX
+        Engine.renderer = SDL_CreateRenderer(Engine.window, -1, SDL_RENDERER_PRESENTVSYNC);
+    #else
+        Engine.renderer = SDL_CreateRenderer(Engine.window, -1, SDL_RENDERER_ACCELERATED);
+    #endif  
 #endif
 
     if (!Engine.window) {
@@ -526,7 +537,26 @@ void FlipScreen()
         if (Engine.gameMode != ENGINE_VIDEOWAIT) {
             if (!drawStageGFXHQ) {
                 SDL_UpdateTexture(Engine.screenBuffer, NULL, (void *)Engine.frameBuffer, GFX_LINESIZE * sizeof(ushort));
-                SDL_RenderCopy(Engine.renderer, Engine.screenBuffer, NULL, destScreenPos);
+                
+                #if RETRO_PLATFORM == RETRO_XBOX
+                    VIDEO_MODE xmode = XVideoGetMode();
+                    int widthXbox;
+                    int heightXbox;
+
+                    if (xmode.width == 1280) {
+                        widthXbox = 430;
+                        heightXbox = 240;
+                    }
+                    if (xmode.width == 640) {
+                        widthXbox = 562;
+                        heightXbox = 320;
+                    }
+
+                    SDL_Rect dest = { 0, 0, widthXbox, heightXbox };
+                    SDL_RenderCopy(Engine.renderer, Engine.screenBuffer, NULL, &dest);
+                #else
+                    SDL_RenderCopy(Engine.renderer, Engine.screenBuffer, NULL, destScreenPos);
+                #endif   
             }
             else {
                 int w = 0, h = 0;
@@ -559,7 +589,26 @@ void FlipScreen()
                     pixels += lineWidth;
                 }
                 SDL_UnlockTexture(Engine.screenBuffer2x);
-                SDL_RenderCopy(Engine.renderer, Engine.screenBuffer2x, NULL, destScreenPos);
+
+                #if RETRO_PLATFORM == RETRO_XBOX
+                    VIDEO_MODE xmode = XVideoGetMode();
+                    int widthXbox;
+                    int heightXbox;
+
+                    if (xmode.width == 1280) {
+                        widthXbox = 430;
+                        heightXbox = 240;
+                    }
+                    if (xmode.width == 640) {
+                        widthXbox = 562;
+                        heightXbox = 320;
+                    }
+
+                    SDL_Rect dest = { 0, 0, widthXbox, heightXbox };
+                    SDL_RenderCopy(Engine.renderer, Engine.screenBuffer2x, NULL, &dest);
+                #else
+                    SDL_RenderCopy(Engine.renderer, Engine.screenBuffer2x, NULL, destScreenPos);
+                #endif 
             }
         }
         else {
@@ -587,7 +636,7 @@ void FlipScreen()
         }
         else {
             // Apply dimming
-            SDL_SetRenderDrawColor(Engine.renderer, 0, 0, 0, 0xFF - (dimAmount * 0xFF));
+            SDL_SetRenderDrawColor(Engine.renderer, 100, 100, 100, 0xFF - (dimAmount * 0xFF));
             if (dimAmount < 1.0)
                 SDL_RenderFillRect(Engine.renderer, NULL);
             // no change here
