@@ -104,7 +104,7 @@ int InitRenderDevice()
 
 #if RETRO_USING_SDL2
     #if RETRO_PLATFORM == RETRO_XBOX
-        SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
+        SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
     #else
         SDL_Init(SDL_INIT_EVERYTHING);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
@@ -159,13 +159,14 @@ int InitRenderDevice()
     #endif
 #if !RETRO_USING_OPENGL
     #if RETRO_PLATFORM == RETRO_XBOX
-        Engine.renderer = SDL_CreateRenderer(Engine.window, -1, SDL_RENDERER_PRESENTVSYNC);
+        Engine.renderer = SDL_CreateRenderer(Engine.window, -1, 0);
     #else
         Engine.renderer = SDL_CreateRenderer(Engine.window, -1, SDL_RENDERER_ACCELERATED);
     #endif  
 #endif
 
     if (!Engine.window) {
+        debugPrint(SDL_GetError());
         PrintLog("ERROR: failed to create window!");
         Engine.gameMode = ENGINE_EXITGAME;
         return 0;
@@ -173,6 +174,7 @@ int InitRenderDevice()
 
 #if !RETRO_USING_OPENGL
     if (!Engine.renderer) {
+        debugPrint(SDL_GetError());
         PrintLog("ERROR: failed to create renderer!");
         Engine.gameMode = ENGINE_EXITGAME;
         return 0;
@@ -186,6 +188,8 @@ int InitRenderDevice()
     Engine.screenBuffer = SDL_CreateTexture(Engine.renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, SCREEN_XSIZE, SCREEN_YSIZE);
 
     if (!Engine.screenBuffer) {
+        debugPrint("2 \n");
+        debugPrint(SDL_GetError());
         PrintLog("ERROR: failed to create screen buffer!\nerror msg: %s", SDL_GetError());
         return 0;
     }
@@ -589,26 +593,7 @@ void FlipScreen()
                     pixels += lineWidth;
                 }
                 SDL_UnlockTexture(Engine.screenBuffer2x);
-
-                #if RETRO_PLATFORM == RETRO_XBOX
-                    VIDEO_MODE xmode = XVideoGetMode();
-                    int widthXbox;
-                    int heightXbox;
-
-                    if (xmode.width == 1280) {
-                        widthXbox = 430;
-                        heightXbox = 240;
-                    }
-                    if (xmode.width == 640) {
-                        widthXbox = 562;
-                        heightXbox = 320;
-                    }
-
-                    SDL_Rect dest = { 0, 0, widthXbox, heightXbox };
-                    SDL_RenderCopy(Engine.renderer, Engine.screenBuffer2x, NULL, &dest);
-                #else
-                    SDL_RenderCopy(Engine.renderer, Engine.screenBuffer2x, NULL, destScreenPos);
-                #endif 
+                SDL_RenderCopy(Engine.renderer, Engine.screenBuffer2x, NULL, destScreenPos);
             }
         }
         else {

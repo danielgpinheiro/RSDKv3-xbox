@@ -11,7 +11,7 @@ static int SCREEN_WIDTH;
 static int SCREEN_HEIGHT;
 
 void SetXboxResolution() {
-    // Based on LithiumX solution to detect Xbox resolution: https://github.com/Ryzee119/LithiumX/blob/f4471d287d44abc84803d3b901bd4aa7ed459689/src/platform/xbox/platform.c#L99
+        // Based on LithiumX solution to detect Xbox resolution: https://github.com/Ryzee119/LithiumX/blob/f4471d287d44abc84803d3b901bd4aa7ed459689/src/platform/xbox/platform.c#L99
     // First try 720p. This is the preferred resolution
     SCREEN_WIDTH = 1280;
     SCREEN_HEIGHT = 720;

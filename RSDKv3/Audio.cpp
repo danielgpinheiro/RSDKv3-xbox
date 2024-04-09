@@ -48,10 +48,6 @@ int InitAudioPlayback()
 {
     StopAllSfx(); //"init"
 
-    #if RETRO_PLATFORM == RETRO_XBOX
-        return 1;
-    #endif
-
 #if RETRO_USING_SDL1 || RETRO_USING_SDL2
     SDL_AudioSpec want;
     want.freq     = AUDIO_FREQUENCY;
@@ -60,6 +56,8 @@ int InitAudioPlayback()
     want.channels = AUDIO_CHANNELS;
     want.callback = ProcessAudioPlayback;
 
+    SDL_InitSubSystem(SDL_INIT_AUDIO);
+
 #if RETRO_USING_SDL2
     if ((audioDevice = SDL_OpenAudioDevice(nullptr, 0, &want, &audioDeviceFormat, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE)) > 0) {
         audioEnabled = true;
@@ -67,9 +65,10 @@ int InitAudioPlayback()
         PrintLog("Opened audio device: %d", audioDevice);
     }
     else {
+        debugPrint(SDL_GetError());
         PrintLog("Unable to open audio device: %s", SDL_GetError());
         audioEnabled = false;
-        return true; // no audio but game wont crash now
+        return 1; // no audio but game wont crash now
     }
 
     // Init video sound stuff
@@ -97,7 +96,6 @@ int InitAudioPlayback()
 #endif // !RETRO_USING_SDL1
 
 #endif
-
     LoadGlobalSfx();
 
     return true;
@@ -105,6 +103,8 @@ int InitAudioPlayback()
 
 void LoadGlobalSfx()
 {
+    debugPrint("LoadGlobalSfx \n");
+
     FileInfo info;
     FileInfo infoStore;
     char strBuffer[0x100];
@@ -347,15 +347,11 @@ void ProcessAudioPlayback(void *userdata, Uint8 *stream, int len)
 #if RETRO_USING_SDL2
         // Process music being played by a ogv video
         if (videoPlaying == 1) {
-            #if RETRO_PLATFORM == RETRO_XBOX
-                return;
-            #endif
             // Fetch THEORAPLAY audio packets, and shove them into the SDL Audio Stream
             const size_t bytes_to_do = samples_to_do * sizeof(Sint16);
 
             // TODO XBOX
             // const THEORAPLAY_AudioPacket *packet;
-
             // while ((packet = THEORAPLAY_getAudio(videoDecoder)) != NULL) {
             //     SDL_AudioStreamPut(ogv_stream, packet->samples, packet->frames * sizeof(float) * 2); // 2 for stereo
             //     THEORAPLAY_freeAudio(packet);
@@ -680,6 +676,9 @@ void LoadSfx(char *filePath, byte sfxID)
     StrCopy(fullPath, "Data/SoundFX/");
     StrAdd(fullPath, filePath);
 
+    debugPrint(fullPath);
+    debugPrint("\n");
+
     if (LoadFile(fullPath, &info)) {
         byte *sfx = new byte[info.vFileSize];
         FileRead(sfx, info.vFileSize);
@@ -704,8 +703,15 @@ void LoadSfx(char *filePath, byte sfxID)
             }
             else {
                 SDL_AudioCVT convert;
+
+                #if RETRO_PLATFORM == RETRO_XBOX
+                    int freq = 44100;
+                #else
+                    int freq = 48000;
+                #endif
+
                 if (SDL_BuildAudioCVT(&convert, wav->format, wav->channels, wav->freq, audioDeviceFormat.format, audioDeviceFormat.channels,
-                                      audioDeviceFormat.freq)
+                                      freq)
                     > 0) {
                     convert.buf = (byte *)malloc(wav_length * convert.len_mult);
                     convert.len = wav_length;
@@ -729,6 +735,7 @@ void LoadSfx(char *filePath, byte sfxID)
 #endif
         UnlockAudioDevice();
     }
+
 }
 void PlaySfx(int sfx, bool loop)
 {

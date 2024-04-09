@@ -36,6 +36,7 @@ INCLUDES += \
 			-I$(RSDK_DIR)/ \
 			-I$(CURDIR)/dependencies/all/filesystem/include \
 			-I$(CURDIR)/dependencies/xbox/ogg/ \
+			-I$(CURDIR)/dependencies/xbox/vorbis/ \
 			-I$(CURDIR)/dependencies/xbox/stb/ \
 
 EXTRA_OFLAGS = \

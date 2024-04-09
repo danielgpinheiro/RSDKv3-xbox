@@ -295,9 +295,7 @@ void RetroEngine::Init()
     running  = false;
     if (LoadGameConfig("Data/Game/GameConfig.bin")) {
         if (InitRenderDevice()) {
-            debugPrint("InitAudioPlayback \n");
             if (InitAudioPlayback()) {
-                debugPrint("InitAudioPlayback OK \n");
                 InitFirstStage();
                 ClearScriptData();
                 initialised = true;
