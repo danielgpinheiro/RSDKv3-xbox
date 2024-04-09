@@ -76,5 +76,6 @@ void SetAchievement(int achievementID, int achievementDone);
 void SetLeaderboard(int leaderboardID, int result);
 inline void LoadAchievementsMenu() { ReadUserdata(); }
 inline void LoadLeaderboardsMenu() { ReadUserdata(); }
+const char *get_user_path(void);
 
 #endif //! USERDATA_H

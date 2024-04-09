@@ -104,6 +104,7 @@ int InitRenderDevice()
 
 #if RETRO_USING_SDL2
     #if RETRO_PLATFORM == RETRO_XBOX
+        VIDEO_MODE xmode = XVideoGetMode();
         SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
     #else
         SDL_Init(SDL_INIT_EVERYTHING);
@@ -159,7 +160,13 @@ int InitRenderDevice()
     #endif
 #if !RETRO_USING_OPENGL
     #if RETRO_PLATFORM == RETRO_XBOX
-        Engine.renderer = SDL_CreateRenderer(Engine.window, -1, 0);
+        byte rendererFlag = 0;
+
+        if (xmode.width == 640) {
+            rendererFlag |= SDL_RENDERER_PRESENTVSYNC;
+        }
+
+        Engine.renderer = SDL_CreateRenderer(Engine.window, -1, rendererFlag);
     #else
         Engine.renderer = SDL_CreateRenderer(Engine.window, -1, SDL_RENDERER_ACCELERATED);
     #endif  
@@ -180,7 +187,13 @@ int InitRenderDevice()
         return 0;
     }
 
-    SDL_RenderSetLogicalSize(Engine.renderer, SCREEN_XSIZE, SCREEN_YSIZE);
+    // SDL_RenderSetLogicalSize(Engine.renderer, SCREEN_XSIZE, SCREEN_YSIZE);
+    #if RETRO_PLATFORM == RETRO_XBOX
+        SDL_RenderSetLogicalSize(Engine.renderer, xmode.width, xmode.height);
+    #else
+        SDL_RenderSetLogicalSize(Engine.renderer, SCREEN_XSIZE, SCREEN_YSIZE);
+    #endif  
+
     SDL_SetRenderDrawBlendMode(Engine.renderer, SDL_BLENDMODE_BLEND);
 #endif
 
@@ -548,12 +561,12 @@ void FlipScreen()
                     int heightXbox;
 
                     if (xmode.width == 1280) {
-                        widthXbox = 430;
-                        heightXbox = 240;
+                        widthXbox = 1280;
+                        heightXbox = 720;
                     }
                     if (xmode.width == 640) {
-                        widthXbox = 562;
-                        heightXbox = 320;
+                        widthXbox = 848;
+                        heightXbox = 480;
                     }
 
                     SDL_Rect dest = { 0, 0, widthXbox, heightXbox };
@@ -621,7 +634,7 @@ void FlipScreen()
         }
         else {
             // Apply dimming
-            SDL_SetRenderDrawColor(Engine.renderer, 100, 100, 100, 0xFF - (dimAmount * 0xFF));
+            SDL_SetRenderDrawColor(Engine.renderer, 0, 0, 0, 0xFF - (dimAmount * 0xFF));
             if (dimAmount < 1.0)
                 SDL_RenderFillRect(Engine.renderer, NULL);
             // no change here

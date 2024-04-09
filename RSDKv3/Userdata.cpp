@@ -438,7 +438,9 @@ void InitUserdata()
         ini.SetFloat("Controller 1", "RTriggerDeadzone", RTRIGGER_DEADZONE = 0.3);
 #endif
 
-        ini.Write(buffer, false);
+        #if RETRO_PLATFORM != RETRO_XBOX
+            ini.Write(buffer, false);
+        #endif
     }
     else {
         fClose(file);
@@ -882,7 +884,9 @@ void WriteSettings()
     sprintf(buffer, BASE_PATH "settings.ini");
 #endif
 
-    ini.Write(buffer, false);
+    #if RETRO_PLATFORM != RETRO_XBOX
+        ini.Write(buffer, false);
+    #endif
 }
 
 void ReadUserdata()
