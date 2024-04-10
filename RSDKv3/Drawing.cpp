@@ -630,13 +630,7 @@ void FlipScreen()
         }
         else {
             // Apply dimming
-            
-            #if RETRO_PLATFORM == RETRO_XBOX
-                SDL_SetRenderDrawColor(Engine.renderer, 1, 0, 99, 0xFF - (dimAmount * 0xFF));
-            #else
-                SDL_SetRenderDrawColor(Engine.renderer, 0, 0, 0, 0xFF - (dimAmount * 0xFF));
-            #endif
-
+            SDL_SetRenderDrawColor(Engine.renderer, 0, 0, 0, 0xFF - (dimAmount * 0xFF));
             if (dimAmount < 1.0)
                 SDL_RenderFillRect(Engine.renderer, NULL);
             // no change here
