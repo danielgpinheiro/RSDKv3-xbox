@@ -173,7 +173,6 @@ int InitRenderDevice()
 #endif
 
     if (!Engine.window) {
-        debugPrint(SDL_GetError());
         PrintLog("ERROR: failed to create window!");
         Engine.gameMode = ENGINE_EXITGAME;
         return 0;
@@ -181,7 +180,6 @@ int InitRenderDevice()
 
 #if !RETRO_USING_OPENGL
     if (!Engine.renderer) {
-        debugPrint(SDL_GetError());
         PrintLog("ERROR: failed to create renderer!");
         Engine.gameMode = ENGINE_EXITGAME;
         return 0;
@@ -201,8 +199,6 @@ int InitRenderDevice()
     Engine.screenBuffer = SDL_CreateTexture(Engine.renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, SCREEN_XSIZE, SCREEN_YSIZE);
 
     if (!Engine.screenBuffer) {
-        debugPrint("2 \n");
-        debugPrint(SDL_GetError());
         PrintLog("ERROR: failed to create screen buffer!\nerror msg: %s", SDL_GetError());
         return 0;
     }
@@ -634,7 +630,13 @@ void FlipScreen()
         }
         else {
             // Apply dimming
-            SDL_SetRenderDrawColor(Engine.renderer, 0, 0, 0, 0xFF - (dimAmount * 0xFF));
+            
+            #if RETRO_PLATFORM == RETRO_XBOX
+                SDL_SetRenderDrawColor(Engine.renderer, 1, 0, 99, 0xFF - (dimAmount * 0xFF));
+            #else
+                SDL_SetRenderDrawColor(Engine.renderer, 0, 0, 0, 0xFF - (dimAmount * 0xFF));
+            #endif
+
             if (dimAmount < 1.0)
                 SDL_RenderFillRect(Engine.renderer, NULL);
             // no change here

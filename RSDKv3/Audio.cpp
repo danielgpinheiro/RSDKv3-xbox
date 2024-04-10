@@ -65,7 +65,6 @@ int InitAudioPlayback()
         PrintLog("Opened audio device: %d", audioDevice);
     }
     else {
-        debugPrint(SDL_GetError());
         PrintLog("Unable to open audio device: %s", SDL_GetError());
         audioEnabled = false;
         return 1; // no audio but game wont crash now
@@ -103,8 +102,6 @@ int InitAudioPlayback()
 
 void LoadGlobalSfx()
 {
-    debugPrint("LoadGlobalSfx \n");
-
     FileInfo info;
     FileInfo infoStore;
     char strBuffer[0x100];
@@ -675,9 +672,6 @@ void LoadSfx(char *filePath, byte sfxID)
 
     StrCopy(fullPath, "Data/SoundFX/");
     StrAdd(fullPath, filePath);
-
-    debugPrint(fullPath);
-    debugPrint("\n");
 
     if (LoadFile(fullPath, &info)) {
         byte *sfx = new byte[info.vFileSize];
