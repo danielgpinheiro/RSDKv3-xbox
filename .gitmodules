@@ -13,3 +13,6 @@
 [submodule "dependencies/xbox/ogg"]
 	path = dependencies/xbox/ogg
 	url = https://github.com/xiph/ogg
+[submodule "dependencies/xbox/theora"]
+	path = dependencies/xbox/theora
+	url = https://github.com/xiph/theora.git
