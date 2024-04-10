@@ -19,6 +19,8 @@ To exit game, select the option on Main Menu, IGR combo buttons don't work here.
 ## Recurring problems
 
 - Videos don't play.
+- Data.rsdk Mobile version not tested. Use the Steam version if any problems occur.
+- Data.rsdk of Sonic Origins don't work.
 
 ## Build Original Xbox binaries / xISO
 
