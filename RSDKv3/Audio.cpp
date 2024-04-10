@@ -347,12 +347,12 @@ void ProcessAudioPlayback(void *userdata, Uint8 *stream, int len)
             // Fetch THEORAPLAY audio packets, and shove them into the SDL Audio Stream
             const size_t bytes_to_do = samples_to_do * sizeof(Sint16);
 
-            // TODO XBOX
-            // const THEORAPLAY_AudioPacket *packet;
-            // while ((packet = THEORAPLAY_getAudio(videoDecoder)) != NULL) {
-            //     SDL_AudioStreamPut(ogv_stream, packet->samples, packet->frames * sizeof(float) * 2); // 2 for stereo
-            //     THEORAPLAY_freeAudio(packet);
-            // }
+            const THEORAPLAY_AudioPacket *packet;
+
+            while ((packet = THEORAPLAY_getAudio(videoDecoder)) != NULL) {
+                SDL_AudioStreamPut(ogv_stream, packet->samples, packet->frames * sizeof(float) * 2); // 2 for stereo
+                THEORAPLAY_freeAudio(packet);
+            }
 
             Sint16 buffer[MIX_BUFFER_SAMPLES];
 

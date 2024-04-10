@@ -1,0 +1,31 @@
+THEORA_DIR ?= $(CURDIR)/dependencies/xbox/theora
+
+THEORA_SRCS += $(THEORA_DIR)/lib/analyze.c
+THEORA_SRCS += $(THEORA_DIR)/lib/apiwrapper.c
+THEORA_SRCS += $(THEORA_DIR)/lib/bitpack.c
+THEORA_SRCS += $(THEORA_DIR)/lib/collect.c
+THEORA_SRCS += $(THEORA_DIR)/lib/decapiwrapper.c
+THEORA_SRCS += $(THEORA_DIR)/lib/decinfo.c
+THEORA_SRCS += $(THEORA_DIR)/lib/decode.c
+THEORA_SRCS += $(THEORA_DIR)/lib/dequant.c
+THEORA_SRCS += $(THEORA_DIR)/lib/encapiwrapper.c
+THEORA_SRCS += $(THEORA_DIR)/lib/encfrag.c
+THEORA_SRCS += $(THEORA_DIR)/lib/encinfo.c
+THEORA_SRCS += $(THEORA_DIR)/lib/encode.c
+THEORA_SRCS += $(THEORA_DIR)/lib/enquant.c
+THEORA_SRCS += $(THEORA_DIR)/lib/fdct.c
+THEORA_SRCS += $(THEORA_DIR)/lib/fragment.c
+THEORA_SRCS += $(THEORA_DIR)/lib/huffdec.c
+THEORA_SRCS += $(THEORA_DIR)/lib/huffenc.c
+THEORA_SRCS += $(THEORA_DIR)/lib/idct.c
+THEORA_SRCS += $(THEORA_DIR)/lib/info.c
+THEORA_SRCS += $(THEORA_DIR)/lib/internal.c
+THEORA_SRCS += $(THEORA_DIR)/lib/mathops.c
+THEORA_SRCS += $(THEORA_DIR)/lib/mcenc.c
+THEORA_SRCS += $(THEORA_DIR)/lib/quant.c
+THEORA_SRCS += $(THEORA_DIR)/lib/rate.c
+THEORA_SRCS += $(THEORA_DIR)/lib/state.c
+THEORA_SRCS += $(THEORA_DIR)/lib/tokenize.c
+
+SRCS += $(THEORA_SRCS)
+CFLAGS += -isystem $(THEORA_DIR)/include

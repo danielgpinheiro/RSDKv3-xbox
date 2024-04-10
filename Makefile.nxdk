@@ -4,10 +4,10 @@ NXDK_DIR = $(CURDIR)/dependencies/xbox/nxdk
 RSDKV3_DIR = $(CURDIR)/RSDKv3
 NXDK_CXX = y
 NXDK_SDL = y
-NXDK_SDL_MIXER = y
 
 SRCS += \
 			$(CURDIR)/dependencies/xbox/stb/stb_image.c \
+			$(CURDIR)/dependencies/all/theoraplay/theoraplay.c \
 			$(RSDKV3_DIR)/Animation.cpp       \
 			$(RSDKV3_DIR)/Audio.cpp           \
 			$(RSDKV3_DIR)/Collision.cpp       \
@@ -38,6 +38,7 @@ INCLUDES += \
 			-I$(CURDIR)/dependencies/xbox/ogg/ \
 			-I$(CURDIR)/dependencies/xbox/vorbis/ \
 			-I$(CURDIR)/dependencies/xbox/stb/ \
+			-I$(CURDIR)/dependencies/all/theoraplay \
 
 EXTRA_OFLAGS = \
 						-O2 \
@@ -68,6 +69,7 @@ new_all: copy_resources all
 # Add vorbis and ogg
 include $(CURDIR)/dependencies/xbox/Makefile-vorbis.nxdk
 include $(CURDIR)/dependencies/xbox/Makefile-ogg.nxdk
+include $(CURDIR)/dependencies/xbox/Makefile-theora.nxdk
 
 include $(NXDK_DIR)/Makefile
 

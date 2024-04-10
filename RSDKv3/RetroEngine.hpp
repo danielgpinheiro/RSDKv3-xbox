@@ -388,10 +388,8 @@ enum RetroBytecodeFormat {
 #include <hal/xbox.h>
 #include <SDL.h>
 #include <vorbis/vorbisfile.h>
-
-#if RETRO_USING_SDLMIXER
-#include <SDL_mixer.h>
-#endif
+#include <theora/theora.h>
+#include <theoraplay.h>
 #endif
 
 #if RETRO_PLATFORM == RETRO_ANDROID

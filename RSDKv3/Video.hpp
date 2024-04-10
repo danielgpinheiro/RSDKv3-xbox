@@ -1,9 +1,7 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#if RETRO_PLATFORM != RETRO_XBOX
 #include "theoraplay.h"
-#endif
 
 extern int currentVideoFrame;
 extern int videoFrameCount;
@@ -11,11 +9,10 @@ extern int videoWidth;
 extern int videoHeight;
 extern float videoAR;
 
-// TODO XBOX
-// extern THEORAPLAY_Decoder *videoDecoder;
-// extern const THEORAPLAY_VideoFrame *videoVidData;
-// extern const THEORAPLAY_AudioPacket *videoAudioData;
-// extern THEORAPLAY_Io callbacks;
+extern THEORAPLAY_Decoder *videoDecoder;
+extern const THEORAPLAY_VideoFrame *videoVidData;
+extern const THEORAPLAY_AudioPacket *videoAudioData;
+extern THEORAPLAY_Io callbacks;
 
 extern byte videoSurface;
 extern int videoFilePos;
